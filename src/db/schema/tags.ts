@@ -1,0 +1,1 @@
+// tags_categories, tags, and albums_tags tables for albums classification and filtering
