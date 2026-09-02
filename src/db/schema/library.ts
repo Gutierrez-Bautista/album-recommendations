@@ -8,18 +8,17 @@ import {
   check,
   index
 } from 'drizzle-orm/pg-core'
-
-import { albums } from './catalog'
 import { sql } from 'drizzle-orm'
 
-// import user from BetterAuth pending...
+import { albums } from './catalog'
+import { users } from './auth'
 
 export const userAlbums = pgTable(
   'user_albums',
   {
     userId: text('user_id')
-      .notNull(),
-    // .references(() => user.id, { onDelete: 'cascade' }),
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
 
     albumId: uuid('album_id').notNull().references(() => albums.id, { onDelete: 'cascade' }),
 

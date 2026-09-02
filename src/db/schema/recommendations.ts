@@ -8,8 +8,7 @@ import {
 } from 'drizzle-orm/pg-core'
 
 import { albums } from './catalog'
-
-// import user from BetterAuth pending...
+import { users } from './auth'
 
 export const dailyPicks = pgTable(
   'daily_picks',
@@ -17,8 +16,8 @@ export const dailyPicks = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
 
     userId: text('user_id')
-      .notNull(),
-    // .references(() => user.id, { onDelete: 'cascade' }),
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
 
     albumId: uuid('album_id').notNull().references(() => albums.id, { onDelete: 'restrict' }),
 
