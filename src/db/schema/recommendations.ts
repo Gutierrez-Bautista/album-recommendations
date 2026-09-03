@@ -1,30 +1,33 @@
 import {
   pgTable,
-  text, uuid,
+  integer, uuid,
   timestamp,
   date,
 
   unique,
+  check,
 } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 
 import { albums } from './catalog'
-import { users } from './auth'
 
 export const dailyPicks = pgTable(
   'daily_picks',
   {
     id: uuid('id').primaryKey().defaultRandom(),
 
-    userId: text('user_id')
+    albumId: uuid('album_id')
       .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+      .references(() => albums.id, { onDelete: 'restrict' }),
 
-    albumId: uuid('album_id').notNull().references(() => albums.id, { onDelete: 'restrict' }),
-
-    localDate: date('local_date', {
+    pickDate: date('pick_date', {
       mode: 'string',
     })
       .notNull(),
+
+    cycle: integer('cycle')
+      .notNull()
+      .default(1),
 
     selectedAt: timestamp('selected_at', {
       mode: 'date',
@@ -32,17 +35,18 @@ export const dailyPicks = pgTable(
     })
       .notNull()
       .defaultNow(),
-
-    savedToSpotifyAt: timestamp('saved_to_spotify_at', {
-      mode: 'date',
-      withTimezone: true
-    }),
-
-    saveError: text('save_error'),
   },
   (table) => [
-    unique('daily_picks_user_id_local_date_unique').on(table.userId, table.localDate),
+    unique('daily_picks_pick_date_unique').on(table.pickDate),
 
-    unique('daily_picks_user_id_album_unique').on(table.userId, table.albumId),
+    unique('daily_picks_cycle_album_unique').on(
+      table.cycle,
+      table.albumId,
+    ),
+
+    check(
+      'daily_picks_cycle_positive',
+      sql`${table.cycle} >= 1`,
+    ),
   ]
 )

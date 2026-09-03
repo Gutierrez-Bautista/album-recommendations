@@ -7,6 +7,16 @@ export const auth = betterAuth({
     provider: "pg",
     usePlural: true,
   }),
+  user: {
+    additionalFields: {
+      role: {
+        type: ['user', 'admin'],
+        defaultValue: 'user',
+        input: false,
+        required: true,
+      }
+    }
+  },
   socialProviders: {
     spotify: {
       clientId: process.env.SPOTIFY_CLIENT_ID!,
