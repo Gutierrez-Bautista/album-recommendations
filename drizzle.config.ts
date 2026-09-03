@@ -12,6 +12,7 @@ export default defineConfig({
     './src/db/schema/settings.ts',
     './src/db/schema/tags.ts',
     './src/db/schema/auth.ts',
+    './src/db/schema/legal.ts',
   ],
   dialect: 'postgresql',
   dbCredentials: {
