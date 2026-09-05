@@ -1,5 +1,7 @@
-import 'dotenv/config';
+import { loadEnvConfig } from '@next/env'
 import { defineConfig } from 'drizzle-kit';
+
+loadEnvConfig(process.cwd())
 
 export default defineConfig({
   out: './drizzle',
@@ -9,7 +11,8 @@ export default defineConfig({
     './src/db/schema/recommendations.ts',
     './src/db/schema/settings.ts',
     './src/db/schema/tags.ts',
-    // './src/db/schema/auth.ts',
+    './src/db/schema/auth.ts',
+    './src/db/schema/legal.ts',
   ],
   dialect: 'postgresql',
   dbCredentials: {

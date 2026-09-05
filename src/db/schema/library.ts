@@ -8,22 +8,19 @@ import {
   check,
   index
 } from 'drizzle-orm/pg-core'
-
-import { albums } from './catalog'
 import { sql } from 'drizzle-orm'
 
-// import user from BetterAuth pending...
+import { albums } from './catalog'
+import { users } from './auth'
 
 export const userAlbums = pgTable(
   'user_albums',
   {
     userId: text('user_id')
-      .notNull(),
-    // .references(() => user.id, { onDelete: 'cascade' }),
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
 
     albumId: uuid('album_id').notNull().references(() => albums.id, { onDelete: 'cascade' }),
-
-    priority: smallint('priority').notNull().default(0),
 
     notes: text('notes'),
 
@@ -35,6 +32,11 @@ export const userAlbums = pgTable(
     })
       .notNull()
       .defaultNow(),
+
+    savedToSpotifyAt: timestamp('saved_to_spotify_at', {
+      mode: 'date',
+      withTimezone: true
+    }),
 
     listenedAt: timestamp('listened_at', {
       mode: 'date',
@@ -55,11 +57,6 @@ export const userAlbums = pgTable(
     }),
 
     index('user_albums_album_id_idx').on(table.albumId),
-
-    check(
-      'user_albums_priority_non_negative',
-      sql`${table.priority} >= 0`,
-    ),
 
     check(
       'user_albums_rating_range',
