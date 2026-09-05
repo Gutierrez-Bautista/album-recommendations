@@ -18,7 +18,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   }
 
   return (
-    <main className={`flex min-h-screen flex-col items-center justify-center py-8 gap-18 px-8 sm:p-12`}>
+    <main className={`flex min-h-screen flex-col items-center justify-center py-8 gap-2 px-8 sm:p-12`}>
       {error === 'access_denied' && (
         <p role="status" className="opacity-35 absolute top-6 left-1/2 -translate-x-1/2">
           Spotify sign-in was cancelled. No changes were made.
@@ -75,6 +75,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </button>
         </form>
       </div>
+
+      <span className="text-zinc-300">or</span>
+      <Link href='/' className="bg-(--app-primary) hover:bg-(--app-primary-hover) hover:scale-105 rounded-full px-6 py-2 transition">Continue as a guest</Link>
     </main>
   )
 }

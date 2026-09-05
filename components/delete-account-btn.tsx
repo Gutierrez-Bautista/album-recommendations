@@ -54,7 +54,7 @@ export function DeleteAccountBtn () {
       >
         {pending
           ? 'deleting account'
-          : 'Decline and delete account'}
+          : 'Delete account'}
       </button>
 
       {error && (
