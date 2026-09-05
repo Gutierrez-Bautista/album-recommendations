@@ -1,0 +1,1 @@
+ALTER TABLE "tag_categories" ADD COLUMN "description" text;
