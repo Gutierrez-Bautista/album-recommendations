@@ -10,6 +10,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  --spotify-green: #1ed760;
+  --spotify_black: #121212;
+  
+  --app-primary: #dd0cb0;
+  --app-primary-hover: #b70c92;
+  --app-primary-light: #f87ddd;
+  --danger: #ef4444;
 }
 
 body {
