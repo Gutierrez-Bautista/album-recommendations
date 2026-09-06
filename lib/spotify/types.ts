@@ -10,8 +10,11 @@ export interface SpotifyAlbumMetadata {
   spotifyAlbumType: 'album' | 'single' | 'compilation',
   releaseDateRaw: string,
   releaseDatePrecision: 'year' | 'month' | 'day',
+  releaseYear: number,
   totalTracks: number,
   spotifyUrl: string,
+  durationMs: number,
+  hasSpotifyMarkedExplicitTracks: boolean,
   coverImageUrl: string | null,
   artists: {
     spotifyId: string,

@@ -3,15 +3,15 @@ import { spotifyFetch } from './client'
 import { extractSpotifyAlbumId } from './validations'
 import { SpotifyNotFoundError, SpotifyRateLimitError, SpotifyServiceError } from './errors'
 import { parseSpotifyAlbumData } from './normalization'
-import { SpotifyAlbumMetadata } from './types'
+import type { SpotifyAlbumMetadata } from './types'
 
-export async function getSpotifyAlbum(input: string): Promise<SpotifyAlbumMetadata> {
-  const albumId = extractSpotifyAlbumId(input)
-
-  const res = await spotifyFetch(`/albums/${encodeURIComponent(albumId)}?market=AR`)
-
+const validateResponseStatus = (
+  res: Response,
+  resource: string,
+  resourceId: string
+): void => {
   if (res.status === 404) {
-    throw new SpotifyNotFoundError('album', albumId)
+    throw new SpotifyNotFoundError(resource, resourceId)
   }
 
   if (res.status === 429) {
@@ -30,7 +30,46 @@ export async function getSpotifyAlbum(input: string): Promise<SpotifyAlbumMetada
   if (!res.ok) {
     throw new SpotifyServiceError(res.status)
   }
+}
 
-  const albumData = (await res.json()) as SpotifyApi.SingleAlbumResponse
-  return parseSpotifyAlbumData(albumData)
+export async function getSpotifyAlbum(input: string): Promise<SpotifyAlbumMetadata> {
+  const albumId = extractSpotifyAlbumId(input)
+
+  const resAlbums = await spotifyFetch(`/albums/${encodeURIComponent(albumId)}?market=AR`)
+
+  validateResponseStatus(resAlbums, 'album', albumId)
+
+  const albumData = (await resAlbums.json()) as SpotifyApi.SingleAlbumResponse
+
+  const tracks: SpotifyApi.TrackObjectSimplified[] = [...albumData.tracks.items]
+
+  const {
+    limit,
+    offset,
+    total,
+  } = albumData.tracks
+
+  for (
+    let nextOffset = offset + limit;
+    nextOffset < total;
+    nextOffset += limit
+  ) {
+    const resTracks = await spotifyFetch(
+      `/albums/${encodeURIComponent(albumId)}/tracks`
+      + `?market=AR&limit=${limit}&offset=${nextOffset}`,
+    )
+
+    validateResponseStatus(
+      resTracks,
+      'album tracks',
+      albumId,
+    )
+
+    const tracksData =
+      (await resTracks.json()) as SpotifyApi.AlbumTracksResponse
+
+    tracks.push(...tracksData.items)
+  }
+
+  return parseSpotifyAlbumData(albumData, tracks)
 }
