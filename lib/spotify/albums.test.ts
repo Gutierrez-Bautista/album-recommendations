@@ -170,6 +170,30 @@ describe('getSpotifyAlbum', () => {
     expect(spotifyFetchMock).not.toHaveBeenCalled()
   })
 
+  it('rejects an album ID rejected by Spotify', async () => {
+    spotifyFetchMock.mockResolvedValue(
+      Response.json(
+        {
+          error: {
+            status: 400,
+            message: 'Invalid base62 id',
+          },
+        },
+        {
+          status: 400,
+        },
+      ),
+    )
+
+    const request = getSpotifyAlbum(SPOTIFY_ALBUM_ID)
+
+    await expect(request).rejects.toBeInstanceOf(
+      InvalidSpotifyAlbumInputError,
+    )
+
+    expect(spotifyFetchMock).toHaveBeenCalledOnce()
+  })
+
   it('throws SpotifyNotFoundError for a missing album', async () => {
     spotifyFetchMock.mockResolvedValue(
       new Response(null, { status: 404 }),

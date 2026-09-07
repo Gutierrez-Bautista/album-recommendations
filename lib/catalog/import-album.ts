@@ -4,6 +4,7 @@ import { albums, artists, albumArtists } from "@/src/db/schema/catalog"
 import { getSpotifyAlbum } from "../spotify/albums"
 import db from "@/src/db"
 import { eq } from "drizzle-orm"
+import { AlbumHasNoArtistsError } from './errors'
 
 type AlbumInsert = typeof albums.$inferInsert
 type ReleaseKind = NonNullable<AlbumInsert['releaseKind']>
@@ -55,7 +56,7 @@ export async function importSpotifyAlbum({
   })) satisfies Omit<ArtistInsert, 'id' | 'createdAt'>[]
 
   if (mappedArtistsData.length === 0) {
-    throw new Error(`Spotify album has no artists: ${metadata.spotifyId}`)
+    throw new AlbumHasNoArtistsError(metadata.spotifyId)
   }
 
   return db.transaction(async (tx) => {

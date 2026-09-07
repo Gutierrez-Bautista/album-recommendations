@@ -1,7 +1,7 @@
 import 'server-only'
 import { spotifyFetch } from './client'
 import { extractSpotifyAlbumId } from './validations'
-import { SpotifyNotFoundError, SpotifyRateLimitError, SpotifyServiceError } from './errors'
+import { InvalidSpotifyAlbumInputError, SpotifyNotFoundError, SpotifyRateLimitError, SpotifyServiceError } from './errors'
 import { parseSpotifyAlbumData } from './normalization'
 import type { SpotifyAlbumMetadata } from './types'
 
@@ -36,6 +36,10 @@ export async function getSpotifyAlbum(input: string): Promise<SpotifyAlbumMetada
   const albumId = extractSpotifyAlbumId(input)
 
   const resAlbums = await spotifyFetch(`/albums/${encodeURIComponent(albumId)}?market=AR`)
+
+  if (resAlbums.status === 400) {
+    throw new InvalidSpotifyAlbumInputError('invalid ID format')
+  }
 
   validateResponseStatus(resAlbums, 'album', albumId)
 
