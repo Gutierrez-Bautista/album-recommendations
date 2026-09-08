@@ -6,7 +6,7 @@ import {
   vi,
 } from 'vitest'
 
-import { AlbumHasNoArtistsError } from '@/lib/catalog/errors'
+import { SpotifyAlbumHasNoArtistsError } from '@/lib/catalog/errors'
 import {
   InvalidSpotifyAlbumInputError,
   SpotifyNotFoundError,
@@ -311,7 +311,7 @@ describe('importAlbumAction', () => {
 
   it('maps incomplete album metadata to a safe message', async () => {
     importSpotifyAlbumMock.mockRejectedValue(
-      new AlbumHasNoArtistsError(SPOTIFY_ALBUM_ID),
+      new SpotifyAlbumHasNoArtistsError(SPOTIFY_ALBUM_ID),
     )
 
     const result = await importAlbumAction(

@@ -5,7 +5,7 @@ import { importAlbumSchema, previewAlbumSchema, type ImportAlbumFields } from '.
 import * as z from "zod"
 import { importSpotifyAlbum } from '@/lib/catalog/import-album'
 import { InvalidSpotifyAlbumInputError, SpotifyNotFoundError, SpotifyRateLimitError, SpotifyServiceError } from "@/lib/spotify/errors"
-import { AlbumHasNoArtistsError } from "@/lib/catalog/errors"
+import { SpotifyAlbumHasNoArtistsError } from "@/lib/catalog/errors"
 import { getSpotifyAlbum } from "@/lib/spotify/albums"
 
 type AlbumImportFieldErrors = Partial<
@@ -119,7 +119,7 @@ const manageSpotifyErrors = (error: unknown) => {
     )
   }
 
-  if (error instanceof AlbumHasNoArtistsError) {
+  if (error instanceof SpotifyAlbumHasNoArtistsError) {
     return createMessageError('Spotify returned incomplete album metadata. Try again later.')
   }
 

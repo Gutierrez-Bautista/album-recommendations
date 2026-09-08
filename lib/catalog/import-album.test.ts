@@ -13,7 +13,7 @@ import {
   artists,
 } from '@/src/db/schema/catalog'
 import type { SpotifyAlbumMetadata } from '../spotify/types'
-import { AlbumHasNoArtistsError } from './errors'
+import { SpotifyAlbumHasNoArtistsError } from './errors'
 
 const {
   getSpotifyAlbumMock,
@@ -281,7 +281,7 @@ describe('importSpotifyAlbum', () => {
     })
 
     await expect(request).rejects.toBeInstanceOf(
-      AlbumHasNoArtistsError,
+      SpotifyAlbumHasNoArtistsError,
     )
 
     await expect(request).rejects.toMatchObject({
