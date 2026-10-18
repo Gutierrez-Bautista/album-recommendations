@@ -1,0 +1,35 @@
+approval_policy = "on-request"
+default_permissions = "daily-album"
+
+[permissions.daily-album]
+description = "Safe local development for Daily Album"
+extends = ":workspace"
+
+[permissions.daily-album.filesystem]
+glob_scan_max_depth = 8
+
+[permissions.daily-album.filesystem.":workspace_roots"]
+".env*" = "deny"
+"**/.env*" = "deny"
+
+"AGENTS.md" = "read"
+"package.json" = "read"
+"pnpm-lock.yaml" = "read"
+"tsconfig.json" = "read"
+".vscode" = "read"
+".codex" = "read"
+"drizzle" = "read"
+"src/db/schema" = "read"
+"lib/auth.ts" = "read"
+
+[permissions.daily-album.network]
+enabled = false
+
+[shell_environment_policy]
+ignore_default_excludes = false
+
+[windows]
+sandbox = "elevated"
+
+[features]
+prefer_mxc = true
