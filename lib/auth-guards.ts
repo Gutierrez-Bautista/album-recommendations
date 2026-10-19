@@ -73,3 +73,12 @@ export const requireAppAccess = cache(async () => {
 
   return session
 })
+
+export const requireAdmin = cache(async () => {
+  const userSession = await requireAppAccess()
+  if (userSession.user.role !== 'admin') {
+    redirect('/')
+  }
+
+  return userSession
+})

@@ -43,7 +43,7 @@ export const albums = pgTable('albums', {
 
   name: text('name').notNull(),
 
-  albumType: spotifyAlbumTypeEnum('spotify_album_type').notNull(),
+  spotifyAlbumType: spotifyAlbumTypeEnum('spotify_album_type').notNull(),
 
   // User-defined classification, e.g. "album", "single", "ep", "compilation". Not provided by Spotify.
   releaseKind: releaseKindEnum('release_kind'),

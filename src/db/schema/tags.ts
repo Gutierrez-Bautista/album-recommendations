@@ -14,6 +14,7 @@ import { albums } from './catalog'
 export const tagCategories = pgTable('tag_categories', {
   id: uuid().primaryKey().defaultRandom(),
   key: text('key').notNull().unique(),
+  description: text('description'),
   name: text('name').notNull(),
 })
 

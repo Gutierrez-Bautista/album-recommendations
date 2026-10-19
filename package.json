@@ -6,16 +6,25 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "type:check": "tsc --noEmit",
+    "db:seed": "tsx --env-file=.env scripts/seed-tags-categories.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "^1.7.2",
     "@neondatabase/serverless": "^1.1.0",
     "better-auth": "^1.7.2",
+    "bufferutil": "^4.1.0",
     "drizzle-orm": "1.0.0-rc.4",
     "next": "16.3.3",
+    "radix-ui": "^1.6.7",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "ws": "^8.21.3",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@next/env": "^16.3.4",
@@ -23,12 +32,17 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/spotify-api": "^0.0.26",
+    "@types/ws": "^8.18.1",
+    "@vitest/coverage-v8": "^4.1.11",
     "drizzle-kit": "1.0.0-rc.4",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.11"
   },
-  "packageManager": "pnpm@10.7.0"
+  "packageManager": "pnpm@12.4.2"
 }

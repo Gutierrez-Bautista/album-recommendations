@@ -1,7 +1,4 @@
-export type SpotifyAlbumUri = `spotify:album:${string}`
-
-export type SpotifyAlbumUrl =
-  `https://open.spotify.com/album/${string}`
+import type { SpotifyAlbumUri, SpotifyAlbumUrl } from "./types"
 
 export function getSpotifyAlbumUri(
   spotifyId: string,
