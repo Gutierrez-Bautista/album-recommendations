@@ -26,8 +26,7 @@ export const dailyPicks = pgTable(
       .notNull(),
 
     cycle: integer('cycle')
-      .notNull()
-      .default(1),
+      .notNull(),
 
     selectedAt: timestamp('selected_at', {
       mode: 'date',

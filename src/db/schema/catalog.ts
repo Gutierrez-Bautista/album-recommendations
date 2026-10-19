@@ -84,6 +84,10 @@ export const albums = pgTable('albums', {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
+  
+  archivedAt: timestamp('archived_at', {
+    withTimezone: true,
+  }),
 })
 
 export const artists = pgTable('artists', {
