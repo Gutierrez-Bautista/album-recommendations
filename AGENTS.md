@@ -29,7 +29,7 @@ Check `package.json`, the lockfile and neighboring source files before relying o
 - **Next.js 16.3.3**, **React 19.2.8**, **TypeScript (strict)**, **Tailwind CSS v4** and the **App Router**.
 - **Better Auth 1.7.x** with Spotify social login, an encrypted OAuth-token configuration, and a **Drizzle relations-v2 adapter**.
 - **Drizzle ORM / Drizzle Kit 1.0.0-rc.4**, **PostgreSQL on Neon**, `@neondatabase/serverless` and `ws`.
-- **Zod 4**, **Vitest 4** and ESLint (`eslint-config-next`). **pnpm 10** is the package manager.
+- **Zod 4**, **Vitest 4**, and ESLint (`eslint-config-next`). **pnpm 12** is the package manager. Use the versions declared in `package.json` and resolved in `pnpm-lock.yaml` as the source of truth.
 - Spotify API response typings presently use `@types/spotify-api`; these typings are **not authoritative documentation** of the current Spotify API.
 
 Repository landmarks (verify exact subpaths before editing):

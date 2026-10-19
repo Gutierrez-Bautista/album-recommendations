@@ -27,11 +27,15 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: [
-        '**/*.test.{ts,tsx}',
-        '**/*.spec.{ts,tsx}',
+        'app/**/*.{ts,tsx}',
+        'components/**/*.{ts,tsx}',
+        'lib/**/*.{ts,tsx}',
+        'src/db/**/*.{ts,tsx}',
       ],
       exclude: [
-        'lib/spotify/**/*.test.ts',
+        '**/*.test.{ts,tsx}',
+        '**/*.spec.{ts,tsx}',
+        '**/*.d.ts',
         'lib/spotify/types.ts',
       ],
     },
