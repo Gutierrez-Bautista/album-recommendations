@@ -31,6 +31,7 @@ vi.mock('@/src/db', () => ({
 }))
 
 import { createDailyPick } from './selector'
+import type { DailyPickCreationResult } from './selector'
 
 function query(rows: object[] = []) {
   const result = Promise.resolve(rows)
@@ -87,14 +88,14 @@ describe('createDailyPick', () => {
 
     const tx = { execute: executeMock, select: selectMock, insert: insertMock }
     transactionMock.mockImplementation(
-      async (callback: (transaction: typeof tx) => Promise<void>) => callback(tx),
+      async (callback: (transaction: typeof tx) => Promise<DailyPickCreationResult>) => callback(tx),
     )
   })
 
   it('inserts the pure selector result using only the transaction and database defaults', async () => {
     vi.mocked(selection.selectDailyPick).mockReturnValueOnce({ albumId: 'c', cycle: 2 })
 
-    await expect(createDailyPick(PICK_DATE)).resolves.toBeUndefined()
+    await expect(createDailyPick(PICK_DATE)).resolves.toBe('created')
 
     expect(transactionMock).toHaveBeenCalledExactlyOnceWith(
       expect.any(Function), { isolationLevel: 'read committed' },
@@ -208,7 +209,7 @@ describe('createDailyPick', () => {
     latest.rows.splice(0, 1, { pickDate: '2026-10-21', cycle: 3 })
     active.rows.length = 0
 
-    await expect(createDailyPick(PICK_DATE)).resolves.toBeUndefined()
+    await expect(createDailyPick(PICK_DATE)).resolves.toBe('existing')
 
     expect(executeMock).toHaveBeenCalledOnce()
     expect(selectMock).toHaveBeenCalledOnce()
@@ -284,7 +285,7 @@ describe('createDailyPick', () => {
     expect(insertMock).not.toHaveBeenCalled()
 
     releaseLock()
-    await expect(request).resolves.toBeUndefined()
+    await expect(request).resolves.toBe('created')
     expect(selectMock).toHaveBeenCalledTimes(5)
   })
 
@@ -304,13 +305,71 @@ describe('createDailyPick', () => {
     let finishInsert!: () => void
     valuesMock.mockReturnValueOnce(new Promise<void>((resolve) => { finishInsert = resolve }))
     let settled = false
-    const request = createDailyPick(PICK_DATE).then(() => { settled = true })
+    const request = createDailyPick(PICK_DATE).then((result) => {
+      settled = true
+      return result
+    })
 
     await vi.waitFor(() => expect(valuesMock).toHaveBeenCalledOnce())
     expect(settled).toBe(false)
     finishInsert()
-    await request
+    await expect(request).resolves.toBe('created')
     expect(settled).toBe(true)
+  })
+
+  it.each(['created', 'existing'] as const)('returns %s only after the transaction commits', async (result) => {
+    if (result === 'existing') {
+      existing.rows.push({ pickDate: PICK_DATE })
+    }
+    let finishCommit!: () => void
+    const commit = new Promise<void>((resolve) => { finishCommit = resolve })
+    let finishCallback!: () => void
+    const callbackFinished = new Promise<void>((resolve) => { finishCallback = resolve })
+    const tx = { execute: executeMock, select: selectMock, insert: insertMock }
+    transactionMock.mockImplementationOnce(async (callback: (transaction: typeof tx) => Promise<DailyPickCreationResult>) => {
+      const creationResult = await callback(tx)
+      finishCallback()
+      await commit
+      return creationResult
+    })
+    let settled = false
+    const request = createDailyPick(PICK_DATE).then((creationResult) => {
+      settled = true
+      return creationResult
+    })
+
+    await callbackFinished
+    expect(settled).toBe(false)
+    finishCommit()
+    await expect(request).resolves.toBe(result)
+  })
+
+  it('returns created and existing for concurrent attempts at the same date', async () => {
+    let finishInsert!: () => void
+    valuesMock.mockReturnValueOnce(new Promise<void>((resolve) => { finishInsert = resolve }))
+    let releaseLock!: () => void
+    const firstCommit = new Promise<void>((resolve) => { releaseLock = resolve })
+    executeMock.mockResolvedValueOnce(undefined).mockReturnValueOnce(firstCommit)
+
+    const tx = { execute: executeMock, select: selectMock, insert: insertMock }
+    transactionMock.mockImplementation(async (callback: (transaction: typeof tx) => Promise<DailyPickCreationResult>) => {
+      const result = await callback(tx)
+      if (result === 'created') {
+        existing.rows.push({ pickDate: PICK_DATE })
+        arrangeQueries()
+        releaseLock()
+      }
+      return result
+    })
+
+    const first = createDailyPick(PICK_DATE)
+    const second = createDailyPick(PICK_DATE)
+    await vi.waitFor(() => expect(valuesMock).toHaveBeenCalledOnce())
+    expect(selectMock).toHaveBeenCalledTimes(5)
+
+    finishInsert()
+    await expect(Promise.all([first, second])).resolves.toEqual(['created', 'existing'])
+    expect(insertMock).toHaveBeenCalledOnce()
   })
 
   it.each(['transaction start', 'lock', 'read', 'insert', 'commit'])(
@@ -327,7 +386,7 @@ describe('createDailyPick', () => {
         valuesMock.mockRejectedValueOnce(failure)
       } else {
         const tx = { execute: executeMock, select: selectMock, insert: insertMock }
-        transactionMock.mockImplementationOnce(async (callback: (transaction: typeof tx) => Promise<void>) => {
+        transactionMock.mockImplementationOnce(async (callback: (transaction: typeof tx) => Promise<DailyPickCreationResult>) => {
           await callback(tx)
           throw failure
         })

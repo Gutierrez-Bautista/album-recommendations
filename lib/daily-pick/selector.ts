@@ -5,33 +5,19 @@ import { and, asc, desc, eq, gte, isNull, lt, sql } from 'drizzle-orm'
 import db from '@/src/db'
 import { albums } from '@/src/db/schema/catalog'
 import { dailyPicks } from '@/src/db/schema/recommendations'
-import { InvalidPickDateError, OutOfOrderDailyPickError } from './errors'
+import { validatePickDate } from './dates'
+import { OutOfOrderDailyPickError } from './errors'
 import { selectDailyPick } from './selection'
 
 // Stable application-wide key shared by generators for every date ("DAILY").
 const DAILY_PICK_LOCK_KEY = 0x4441494c59
 
-function validatePickDate(pickDate: string): void {
-  if (pickDate.length !== 10 || !/^\d{4}-\d{2}-\d{2}$/.test(pickDate)) {
-    throw new InvalidPickDateError(pickDate)
-  }
+export type DailyPickCreationResult = 'created' | 'existing'
 
-  const date = new Date(`${pickDate}T00:00:00.000Z`)
-
-  // PostgreSQL has no year zero; the UTC round trip rejects normalized dates.
-  if (
-    pickDate.startsWith('0000') ||
-    Number.isNaN(date.getTime()) ||
-    date.toISOString().slice(0, 10) !== pickDate
-  ) {
-    throw new InvalidPickDateError(pickDate)
-  }
-}
-
-export async function createDailyPick(pickDate: string): Promise<void> {
+export async function createDailyPick(pickDate: string): Promise<DailyPickCreationResult> {
   validatePickDate(pickDate)
 
-  await db.transaction(async (tx) => {
+  return db.transaction(async (tx) => {
     await tx.execute(sql`select pg_advisory_xact_lock(${DAILY_PICK_LOCK_KEY}::bigint)`)
 
     const [existingPick] = await tx
@@ -41,7 +27,7 @@ export async function createDailyPick(pickDate: string): Promise<void> {
       .limit(1)
 
     if (existingPick) {
-      return
+      return 'existing'
     }
 
     const [latestPick] = await tx
@@ -83,6 +69,7 @@ export async function createDailyPick(pickDate: string): Promise<void> {
     })
 
     await tx.insert(dailyPicks).values({ ...selection, pickDate })
+    return 'created'
   }, {
     // Reads after waiting for the lock must see the preceding generator's commit.
     isolationLevel: 'read committed',
