@@ -1,6 +1,7 @@
 'use client'
 
 import Image from "next/image"
+import { formatAlbumDuration } from '@/lib/catalog/formatting'
 import { useActionState } from "react"
 import {
   importAlbumAction,
@@ -16,18 +17,6 @@ const initialPreviewState: AlbumPreviewState = {
 
 const initialImportState: AlbumImportState = {
   status: 'idle',
-}
-
-function formatDuration(durationMs: number): string {
-  const totalMinutes = Math.floor(durationMs / 60_000)
-  const hours = Math.floor(totalMinutes / 60)
-  const minutes = totalMinutes % 60
-
-  if (hours === 0) {
-    return `${minutes} min`
-  }
-
-  return `${hours} hr ${minutes} min`
 }
 
 export default function AlbumImportForm () {
@@ -162,7 +151,7 @@ function AlbumPreviewAndImport({
 
             <div>
               <dt className="text-zinc-400">Duration</dt>
-              <dd>{formatDuration(preview.durationMs)}</dd>
+              <dd>{formatAlbumDuration(preview.durationMs)}</dd>
             </div>
 
             <div>

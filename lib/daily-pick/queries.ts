@@ -34,6 +34,7 @@ export interface DailyPickDetails {
 
     tagCategories: {
       id: string
+      key: string
       name: string
       description: string | null
 
@@ -78,6 +79,7 @@ export async function getDailyPickByDate(pickDate: string): Promise<DailyPickDet
     if (!category) {
       category = {
         id: tag.categoryId,
+        key: tag.categoryKey,
         name: tag.category,
         description: tag.categoryDescription,
         tags: [],

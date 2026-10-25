@@ -10,6 +10,7 @@ export type AlbumTag = {
   id: string,
   name: string,
   categoryId: string,
+  categoryKey: string,
   category: string,
   categoryDescription: string | null,
 }
@@ -50,6 +51,7 @@ export async function getAlbumById(albumId: string): Promise<AlbumDetails> {
       name: tags.name,
       category: tagCategories.name,
       categoryId: tags.categoryId,
+      categoryKey: tagCategories.key,
       categoryDescription: tagCategories.description,
     })
     .from(tags)

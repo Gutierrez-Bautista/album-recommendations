@@ -1,6 +1,7 @@
 'use client'
 
 import { InfoPopover } from '@/components/info-popover'
+import { getTagCategoryColor } from '@/lib/catalog/tag-presentation'
 import type { getTagCategoriesWithTags } from '@/lib/catalog/queries/tags'
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { updateAlbumAction, type UpdateAlbumState } from './actions'
@@ -16,17 +17,6 @@ type Props = {
 }
 
 const initialState: UpdateAlbumState = { status: 'idle' }
-
-const selectedColorByCategoryKey: Record<string, string> = {
-  genre: 'border-sky-400/50 bg-sky-400/15 text-sky-100',
-  mood: 'border-amber-400/50 bg-amber-400/15 text-amber-100',
-  context: 'border-teal-400/50 bg-teal-400/15 text-teal-100',
-  sonic_trait: 'border-violet-400/50 bg-violet-400/15 text-violet-100',
-  language: 'border-orange-400/50 bg-orange-400/15 text-orange-100',
-  custom: 'border-indigo-400/50 bg-indigo-400/15 text-indigo-100',
-}
-
-const fallbackSelectedColor = 'border-slate-400/50 bg-slate-400/15 text-slate-100'
 
 type Selection = {
   releaseKind: string
@@ -133,7 +123,7 @@ export default function AlbumEditForm({
 
         <div className="mt-5 space-y-6">
           {visibleCategories.map((category) => {
-            const selectedColor = selectedColorByCategoryKey[category.key] ?? fallbackSelectedColor
+            const selectedColor = getTagCategoryColor(category.key)
 
             return (
               <fieldset key={category.id} className="min-w-0">

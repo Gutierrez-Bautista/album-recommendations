@@ -9,31 +9,36 @@ type Props = {
   contentLabel: string
   children: ReactNode
   className?: string
+  showIcon?: boolean
+  triggerLabel?: string
 }
 
 export function InfoPopover({
   label,
   contentLabel,
   children,
-  className
+  className = '',
+  showIcon = true,
+  triggerLabel,
 }: Props) {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
         <button
           type="button"
+          aria-label={triggerLabel}
           className={"inline-flex items-center gap-2 text-left cursor-help " + className}
         >
           {label}
 
-          <Image
+          {showIcon && <Image
             src="/info.svg"
             alt=""
             aria-hidden="true"
             width={16}
             height={16}
             className="opacity-70"
-          />
+          />}
         </button>
       </Popover.Trigger>
 
@@ -43,7 +48,7 @@ export function InfoPopover({
           side="top"
           sideOffset={8}
           collisionPadding={12}
-          className="z-50 max-w-64 rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white/80 shadow-xl outline-none"
+          className="z-50 max-w-[min(16rem,calc(100vw-1.5rem))] wrap-anywhere rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-white/80 shadow-xl outline-none"
         >
           {children}
 

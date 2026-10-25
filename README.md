@@ -16,16 +16,16 @@ This is also a learning project focused on building a small, maintainable, produ
 
 ## How it works
 
-The intended workflow is:
+The core workflow is:
 
 1. An administrator imports an album using its Spotify URL or ID.
 2. The application retrieves the available Spotify metadata and stores the album in its catalog.
 3. The administrator can assign a release classification and descriptive tags.
 4. The application selects one eligible album as the daily recommendation.
-5. Visitors can explore the recommended album and open it on Spotify.
+5. Visitors can view the daily recommendation and open the album on Spotify.
 6. Previous recommendations are recorded to avoid unintended repeats.
 
-Steps 1–3 are currently implemented. The daily recommendation and history functionality are planned for the next development stages.
+**The core workflow (steps 1–6) is fully implemented.** Some MVP features remain, including public album detail and history views, navigation, and final integration.
 
 Daily Album does not automatically save albums to a user's Spotify library in its initial version.
 
@@ -188,12 +188,12 @@ Most unit tests are colocated with the modules they test using the `*.test.ts` n
 - [x] Add album ingestion by Spotify URL or ID
 - [x] Implement album metadata preview and catalog import
 - [x] Implement album classification editing and tag assignment
+- [x] Implement the daily album selection logic
+- [x] Build the daily recommendation interface
+- [x] Implement recommendation history and repeat prevention
 
 ### MVP — remaining work
 
-- [ ] Implement the daily album selection logic
-- [ ] Build the daily recommendation interface
-- [ ] Implement recommendation history and repeat prevention
 - [ ] Build public album details and history views
 - [ ] Complete navigation and final MVP integration
 

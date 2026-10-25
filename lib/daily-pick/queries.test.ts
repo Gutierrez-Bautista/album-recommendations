@@ -78,29 +78,29 @@ const persistedArtists = [
 const persistedTags = [
   {
     id: 'ambient-1', name: 'Ambient', categoryId: 'genre-1',
-    category: 'Genre', categoryDescription: 'Musical genre',
+    categoryKey: 'genre', category: 'Genre', categoryDescription: 'Musical genre',
   },
   {
     id: 'ambient-2', name: 'Ambient', categoryId: 'genre-1',
-    category: 'Genre', categoryDescription: 'Musical genre',
+    categoryKey: 'genre', category: 'Genre', categoryDescription: 'Musical genre',
   },
   {
     id: 'rock', name: 'Rock', categoryId: 'genre-1',
-    category: 'Genre', categoryDescription: 'Musical genre',
+    categoryKey: 'genre', category: 'Genre', categoryDescription: 'Musical genre',
   },
   {
     id: 'jazz', name: 'Jazz', categoryId: 'genre-2',
-    category: 'Genre', categoryDescription: 'Another category with the same name',
+    categoryKey: 'custom', category: 'Genre', categoryDescription: 'Another category with the same name',
   },
   {
     id: 'calm', name: 'Calm', categoryId: 'mood',
-    category: 'Mood', categoryDescription: null,
+    categoryKey: 'mood', category: 'Mood', categoryDescription: null,
   },
 ]
 
 const expectedCategories = [
   {
-    id: 'genre-1', name: 'Genre', description: 'Musical genre',
+    id: 'genre-1', key: 'genre', name: 'Genre', description: 'Musical genre',
     tags: [
       { id: 'ambient-1', name: 'Ambient' },
       { id: 'ambient-2', name: 'Ambient' },
@@ -108,11 +108,11 @@ const expectedCategories = [
     ],
   },
   {
-    id: 'genre-2', name: 'Genre', description: 'Another category with the same name',
+    id: 'genre-2', key: 'custom', name: 'Genre', description: 'Another category with the same name',
     tags: [{ id: 'jazz', name: 'Jazz' }],
   },
   {
-    id: 'mood', name: 'Mood', description: null,
+    id: 'mood', key: 'mood', name: 'Mood', description: null,
     tags: [{ id: 'calm', name: 'Calm' }],
   },
 ]

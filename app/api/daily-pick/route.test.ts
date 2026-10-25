@@ -35,7 +35,7 @@ const dailyPick = {
     ],
     tagCategories: [
       {
-        id: 'genre', name: 'Genre', description: null,
+        id: 'genre', key: 'genre', name: 'Genre', description: null,
         tags: [{ id: 'ambient', name: 'Ambient' }],
       },
     ],

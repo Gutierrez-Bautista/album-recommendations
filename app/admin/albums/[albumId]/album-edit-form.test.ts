@@ -107,6 +107,23 @@ describe('AlbumEditForm', () => {
     expect(markup).toContain('type="submit" disabled=""')
   })
 
+  it('keeps selected chip colors, checkmarks, and checkbox behavior after sharing the color map', () => {
+    const markup = renderForm('ep', [genreTagIds[0], moodTagId])
+
+    expect(markup).toContain('border-sky-400/50 bg-sky-400/15 text-sky-100')
+    expect(markup).toContain('border-amber-400/50 bg-amber-400/15 text-amber-100')
+    expect(markup).toContain('border-white/15 bg-zinc-900 text-zinc-200')
+    expect(markup).toContain('✓')
+    expect(tagInputs(markup).filter((input) => input.includes('checked=""'))).toHaveLength(2)
+  })
+
+  it('uses the shared fallback color for a selected tag from an unknown category', () => {
+    const markup = renderForm('ep', [moodTagId], [{ ...categories[1], key: 'future-category' }])
+
+    expect(markup).toContain('border-slate-400/50 bg-slate-400/15 text-slate-100')
+    expect(tagInputs(markup)[0]).toContain('checked=""')
+  })
+
   it('shows an empty state if no category has available tags', () => {
     const markup = renderForm('ep', [], [categories[2]])
 

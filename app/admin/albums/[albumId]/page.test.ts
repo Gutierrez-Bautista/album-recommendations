@@ -44,7 +44,7 @@ const album = {
   spotifyId: '4aawyAB9vmqN3uQ7FjRGTy',
   name: 'Example Album',
   artists: [{ id: 'artist-id', name: 'Example Artist' }],
-  tags: [{ id: TAG_ID, name: 'Rock', categoryId: 'category-id', category: 'Genre' }],
+  tags: [{ id: TAG_ID, name: 'Rock', categoryId: 'category-id', categoryKey: 'genre', category: 'Genre', categoryDescription: null }],
   spotifyAlbumType: 'album',
   releaseKind: 'ep',
   releaseDateRaw: '2026-09',

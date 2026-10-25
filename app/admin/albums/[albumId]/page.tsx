@@ -1,4 +1,5 @@
 import { AlbumNotFoundError, CatalogAlbumHasNoArtistsError } from "@/lib/catalog/errors"
+import { formatAlbumDuration } from '@/lib/catalog/formatting'
 import { type AlbumDetails, getAlbumById } from "@/lib/catalog/queries/albums"
 import { getTagCategoriesWithTags } from "@/lib/catalog/queries/tags"
 import { InfoPopover } from "@/components/info-popover"
@@ -27,16 +28,6 @@ function invalidAlbumPage (id: string, kind: 'invalid_id' | 'internal_data') {
       className="px-6 py-2 rounded-full bg-(--app-primary) transition hover:bg-(--app-primary-hover) cursor-pointer"
     >Back to home</Link>
   </main>
-}
-
-function formatDuration(durationMs: number | null): string {
-  if (durationMs === null) return 'Unavailable'
-
-  const totalMinutes = Math.floor(durationMs / 60_000)
-  const hours = Math.floor(totalMinutes / 60)
-  const minutes = totalMinutes % 60
-
-  return hours === 0 ? `${minutes} min` : `${hours} hr ${minutes} min`
 }
 
 export default async function AlbumEditPage(props: Props) {
@@ -115,7 +106,7 @@ export default async function AlbumEditPage(props: Props) {
                 </div>
                 <div>
                   <dt className="text-zinc-400">Duration</dt>
-                  <dd className="mt-1">{formatDuration(album.durationMs)}</dd>
+                  <dd className="mt-1">{formatAlbumDuration(album.durationMs) ?? 'Unavailable'}</dd>
                 </div>
                 <div>
                   <dt className="flex items-center gap-1 text-zinc-400">

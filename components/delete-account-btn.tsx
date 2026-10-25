@@ -1,13 +1,16 @@
 'use client'
 
 import { authClient } from "@/lib/auth-client"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
-export function DeleteAccountBtn () {
+export function useDeleteAccount() {
   const [pending, setPending] = useState(false)
-  const [error, setError] = useState<null | string>()
-  const handleCancel = async () => {
-  
+  const [error, setError] = useState<string | null>(null)
+  const inFlight = useRef(false)
+
+  async function deleteAccount() {
+    if (inFlight.current) return
+
     const confirmed = window.confirm(
       'this will delete your account, library, and Spotify connection. It cannot be undone. Are you sure you want to continue?',
     )
@@ -16,49 +19,55 @@ export function DeleteAccountBtn () {
       return
     }
 
-    alert('After deleting your account, you will be redirected to the main page. You will also need to remove access from Spotify at https://www.spotify.com/account/apps/')
+    window.alert('After deleting your account, you will be redirected to the main page. You will also need to remove access from Spotify at https://www.spotify.com/account/apps/')
 
+    inFlight.current = true
     setPending(true)
     setError(null)
 
-    const result = await authClient.deleteUser({
-      callbackURL: '/login?accountDeleted=1',
-    })
+    try {
+      const result = await authClient.deleteUser({
+        callbackURL: '/login?accountDeleted=1',
+      })
 
-    if (result.error) {
-      if (result.error.code === 'SESSION_NOT_FRESH') {
-        setError(
-          'Por seguridad, debes volver a iniciar sesión antes de eliminar la cuenta.',
-        )
+      if (result.error) {
+        setError(result.error.code === 'SESSION_NOT_FRESH'
+          ? 'For your security, sign in again before deleting your account.'
+          : 'Unable to delete your account. Please try again.')
       } else {
-        setError(
-          'No se pudo eliminar la cuenta. Inténtalo de nuevo.',
-        )
+        // Fallback if Better Auth does not redirect automatically.
+        window.location.replace('/login?accountDeleted=1')
+        return
       }
-
-      setPending(false)
-      return
+    } catch {
+      setError('Unable to delete your account. Please try again.')
     }
 
-    // Fallback si Better Auth no realiza automáticamente la redirección.
-    window.location.replace('/login?accountDeleted=1')
+    inFlight.current = false
+    setPending(false)
   }
+
+  return { deleteAccount, pending, error }
+}
+
+export function DeleteAccountBtn () {
+  const { deleteAccount, pending, error } = useDeleteAccount()
 
   return (
     <div>
       <button
         type="button"
-        onClick={handleCancel}
+        onClick={deleteAccount}
         disabled={pending}
-        className="text-sm border rounded-full w-60 px-6 py-2 cursor-pointer transition hover:border-red-600 hover:text-red-600 disabled:opacity-50"
+        className="text-sm border rounded-full w-60 max-w-full px-6 py-2 cursor-pointer transition hover:border-(--danger) hover:text-(--danger) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--danger) disabled:cursor-not-allowed disabled:opacity-50"
       >
         {pending
-          ? 'deleting account'
+          ? 'Deleting account…'
           : 'Delete account'}
       </button>
 
       {error && (
-        <p role="alert" className="mt-2 text-sm text-red-600">
+        <p role="alert" className="mt-2 text-sm text-(--danger)">
           {error}
         </p>
       )}
