@@ -101,12 +101,14 @@ const persistedTags = [
     name: 'Rock',
     categoryId: 'genre-category-id',
     category: 'Genre',
+    categoryDescription: 'Musical genre',
   },
   {
     id: 'energetic-tag-id',
     name: 'Energetic',
     categoryId: 'mood-category-id',
     category: 'Mood',
+    categoryDescription: null,
   },
 ]
 
@@ -197,6 +199,7 @@ describe('getAlbumById', () => {
       name: tags.name,
       category: tagCategories.name,
       categoryId: tags.categoryId,
+      categoryDescription: tagCategories.description,
     })
     expect(tagFromMock).toHaveBeenCalledWith(tags)
     expect(
@@ -214,7 +217,9 @@ describe('getAlbumById', () => {
     expect(tagWhereMock).toHaveBeenCalledOnce()
     expect(tagOrderByMock).toHaveBeenCalledWith(
       tagCategories.name,
+      tagCategories.id,
       tags.name,
+      tags.id,
     )
   })
 
