@@ -12,7 +12,7 @@ The initial version is primarily intended for personal use, with an administrati
 
 This is also a learning project focused on building a small, maintainable, production-oriented web application.
 
-**Project status:** Under active development. Authentication and catalog management are implemented; daily recommendations and recommendation history are still pending.
+**Project status:** Under active development. The core daily recommendation workflow is implemented, including authentication, catalog management, daily album selection, recommendation history tracking, and the public daily recommendation interface. Public album details, history views, navigation, and final MVP integration remain pending.
 
 ## How it works
 
@@ -79,6 +79,8 @@ The application uses the following variables:
 | `SPOTIFY_CLIENT_SECRET`   | Client Secret from the Spotify Developer Dashboard  |
 | `CURRENT_TERMS_VERSION`   | Current Terms and Conditions version identifier     |
 | `CURRENT_PRIVACY_VERSION` | Current Privacy Policy version identifier           |
+| `DAILY_PICK_START_DATE` | First calendar date of the daily recommendation history (YYYY-MM-DD)           |
+| `CRON_SECRET` |Secret used to authenticate requests to the daily recommendation cron endpoint           |
 
 For local development, set:
 
