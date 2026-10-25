@@ -175,4 +175,22 @@ git diff --check
 
 Before running a check, consider script hooks/import side effects. Do not run `pnpm dev`, `pnpm build`, `pnpm db:seed`, Drizzle commands or live integration tests without approval; these may read local secrets or contact services. Do not change a test/config to hide a failure. If dependencies are absent, ask instead of installing.
 
+### Verification in the Windows sandbox
+
+Prefer the project's standard `pnpm` scripts when they work inside the sandbox.
+
+If pnpm fails due to Windows sandbox filesystem restrictions (such as inability to acquire its global store lock), run the locally installed tools directly through Node.js:
+
+```powershell
+node ./node_modules/eslint/bin/eslint.js .
+node ./node_modules/vitest/vitest.mjs run
+node ./node_modules/typescript/bin/tsc --noEmit
+```
+
+For focused tests, pass the relevant test file paths to the Vitest command.
+
+Do not request execution outside the sandbox solely to bypass pnpm restrictions. Do not modify filesystem permissions, install dependencies, or access protected environment files to make verification commands work.
+
+Report the commands actually executed and their results. If direct execution also fails, report the blocker rather than claiming successful verification.
+
 In the final response, state (1) change summary and files, (2) why the approach matches existing design, (3) exact checks run and outcomes, (4) unverified behavior and any policy/version risks, and (5) questions requiring owner approval. Never claim success for unexecuted checks.

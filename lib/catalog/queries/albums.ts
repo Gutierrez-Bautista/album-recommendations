@@ -6,7 +6,14 @@ import { eq } from 'drizzle-orm'
 import { AlbumNotFoundError, CatalogAlbumHasNoArtistsError } from '../errors'
 
 export type AlbumArtist = { id: string, name: string }
-export type AlbumTag = { id: string, name: string, categoryId: string, category: string }
+export type AlbumTag = {
+  id: string,
+  name: string,
+  categoryId: string,
+  categoryKey: string,
+  category: string,
+  categoryDescription: string | null,
+}
 export type Album = typeof albums.$inferSelect
 
 export type AlbumDetails = Album & {
@@ -44,12 +51,14 @@ export async function getAlbumById(albumId: string): Promise<AlbumDetails> {
       name: tags.name,
       category: tagCategories.name,
       categoryId: tags.categoryId,
+      categoryKey: tagCategories.key,
+      categoryDescription: tagCategories.description,
     })
     .from(tags)
     .innerJoin(albumTags, eq(albumTags.tagId, tags.id))
     .innerJoin(tagCategories, eq(tags.categoryId, tagCategories.id))
     .where(eq(albumTags.albumId, albumId))
-    .orderBy(tagCategories.name, tags.name)
+    .orderBy(tagCategories.name, tagCategories.id, tags.name, tags.id)
 
   return {
     ...albumData,

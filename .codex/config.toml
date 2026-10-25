@@ -32,4 +32,4 @@ ignore_default_excludes = false
 sandbox = "elevated"
 
 [features]
-prefer_mxc = true
+prefer_mxc = false
